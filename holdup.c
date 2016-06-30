@@ -1,6 +1,8 @@
 #define _DEFAULT_SOURCE
-#include <stdio.h>
 #include <fts.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include <sys/stat.h>
 #include <unistd.h>
 #include "fsys.h"
@@ -11,6 +13,11 @@ int main(int argc, char *argv[])
 {
 	if(argc < 3)
 		return 1;
+
+	// strip trailing '/' for source(s)/destination
+	for(int i = 1; i < argc; i++)
+		if(argv[i][strlen(argv[i]) - 1] == '/')
+			argv[i][strlen(argv[i]) - 1] = '\0';
 
 	FTS *fts = fts_open(argv + 2, FTS_COMFOLLOW | FTS_NOCHDIR, &byType);
 	FTSENT *node;
