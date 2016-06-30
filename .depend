@@ -1,1 +1,2 @@
-holdup.o: holdup.c
+fsys.o: fsys.c fsys.h
+holdup.o: holdup.c fsys.h
