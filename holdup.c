@@ -1,9 +1,11 @@
 #define _DEFAULT_SOURCE
 #include <stdio.h>
 #include <fts.h>
+#include <sys/stat.h>
 #include <unistd.h>
 #include "fsys.h"
 #include "holdup.h"
+#include "util.h"
 
 int main(int argc, char *argv[])
 {
@@ -23,6 +25,7 @@ int main(int argc, char *argv[])
 			break;
 		case FTS_F: // file
 		case FTS_SL: // symlink
+			process(node);
 			break;
 		case FTS_DNR: // inaccessable dir
 		case FTS_ERR: // general error
@@ -34,6 +37,16 @@ int main(int argc, char *argv[])
 
 	fts_close(fts);
 	return 0;
+}
+
+/* TODO */
+void process(FTSENT *node)
+{
+	// basic output
+	indent(node->fts_level);
+	char fileSize[STRLEN_FILESIZE];
+	printf("%s: %s\n", node->fts_name,
+		fileSizeString(node->fts_statp->st_size, fileSize, STRLEN_FILESIZE));
 }
 
 /* when processing an FTSENT, prioritise

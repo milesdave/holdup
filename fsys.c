@@ -5,12 +5,9 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include "fsys.h"
+#include "util.h"
 
 #define BUFFER_SIZE 512
-#define GRN "\x1b[1;32m"
-#define NRM "\x1b[0m"
-
-typedef struct stat stat_t;
 
 void printPercentage(off_t, off_t, off_t*);
 
