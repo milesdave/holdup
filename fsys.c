@@ -7,14 +7,21 @@
 #include "fsys.h"
 
 #define BUFFER_SIZE 512
+#define GRN "\x1b[1;32m"
+#define NRM "\x1b[0m"
 
 typedef struct stat stat_t;
 
+void printPercentage(off_t, off_t, off_t*);
+
+/* copies the source file to the destination file in
+	BUFFER_SIZE sections at a time
+	- prints percentage complete */
 void fsys_copy(const char *src, const char *dest)
 {
 	int srcFD, destFD;
 	char buffer[BUFFER_SIZE];
-	off_t bufferSize, fileSize, written, remaining;
+	off_t bufferSize, fileSize, written, remaining, last;
 
 	// open source
 	if((srcFD = open(src, O_RDONLY)) == -1)
@@ -31,8 +38,9 @@ void fsys_copy(const char *src, const char *dest)
 
 	bufferSize = written = 0;
 	remaining = fileSize = fileInfo.st_size;
+	last = -1; // -1 means nothing written yet - used in printPercentage()
 
-	// copy file BUFFER_SIZE at a time
+	// copy source BUFFER_SIZE at a time to destination
 	while(written != fileSize)
 	{
 		// file or remainder of file could be < BUFFER_SIZE
@@ -45,6 +53,7 @@ void fsys_copy(const char *src, const char *dest)
 
 		written += bufferSize;
 		remaining -= bufferSize;
+		printPercentage(written, fileSize, &last);
 	}
 
 	close(srcFD);
@@ -58,4 +67,26 @@ W_OPEN_ERR:
 	close(srcFD);
 R_OPEN_ERR:
 	perror("");
+}
+
+/* prints the percentage of the file copied, overwriting the
+	previous output each time using '*last' as a reference
+	for how much to backspace each time
+	- output of '100%' is coloured green */
+void printPercentage(off_t written, off_t fileSize, off_t *last)
+{
+	off_t percent = ((double)written / (double)fileSize) * 100.0;
+
+	if(*last == -1) // first print
+		percent == 100 ? printf("%s100%%%s", GRN, NRM)
+			: printf("%ld%%", percent);
+	else if(*last < 10)
+		percent == 100 ? printf("\b\b%s100%%%s", GRN, NRM)
+			: printf("\b\b%ld%%", percent);
+	else if(*last < 100)
+		percent == 100 ? printf("\b\b\b%s100%%%s", GRN, NRM)
+			: printf("\b\b\b%ld%%", percent);
+
+	fflush(stdout);
+	*last = percent;
 }
