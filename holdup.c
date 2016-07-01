@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
+#include <time.h>
 #include <unistd.h>
 #include "fsys.h"
 #include "holdup.h"
@@ -64,7 +65,7 @@ void process(FTSENT *node)
 	// basic output
 	indent(node->fts_level);
 	char fileSize[STRLEN_FILESIZE];
-	printf("%s: %s\n", node->fts_name,
+	printf("%s: %s ", node->fts_name,
 		fileSizeString(node->fts_statp->st_size, fileSize, STRLEN_FILESIZE));
 
 	char destPath[PATH_MAX]; // without filename - used for mkpath()
@@ -81,11 +82,27 @@ void process(FTSENT *node)
 			return;
 		}
 
-		// TODO copy
+		copy(node->fts_path, destFile);
 	}
 	else // destFile does exist
 	{
 		//
+	}
+}
+
+/* TODO */
+void copy(const char *src, const char *dest)
+{
+	// start time
+	timespec_t start, end;
+	clock_gettime(CLOCK_REALTIME, &start);
+
+	if((fsys_copy(src, dest, &info)) != -1)
+	{
+		// time output
+		clock_gettime(CLOCK_REALTIME, &end);
+		char timeStr[STRLEN_TIME];
+		printf(" %s\n", timeString(timeDiff(&start, &end), timeStr, STRLEN_TIME));
 	}
 }
 

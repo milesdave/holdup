@@ -1,7 +1,9 @@
 #ifndef _FSYS_H
 #define _FSYS_H
 
-void fsys_copy(const char*, const char*);
+#include "types.h"
+
+int fsys_copy(const char*, const char*, info_t*);
 int fsys_exists(const char*);
 int fsys_mkpath(const char*);
 

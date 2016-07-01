@@ -6,6 +6,7 @@
 #include "util.h"
 
 const char *byteSuffix[] = {"B", "K", "M", "G"};
+const char *timeSuffix[] = {"seconds", "minutes", "hours"};
 
 /* converts a file size in bytes into a string
 	with a more human readable format, eg: "1.4M" */
@@ -59,4 +60,29 @@ void getPaths(char *destPath, char *destFile, char *fileName, info_t *info)
 
 	// build the destination path + filename
 	snprintf(destFile, PATH_MAX, "%s/%s", destPath, fileName);
+}
+
+/* converts a time into a string with a more
+	human readable format, eg: "1.2 minutes" */
+char* timeString(double time, char *buffer, const unsigned int bufferSize)
+{
+	int i = 0;
+
+	// reduce time to appropriate format
+	while(time > 60 && i < 2)
+	{
+		time /= 60;
+		i++;
+	}
+
+	snprintf(buffer, bufferSize, "%.2f %s", time, timeSuffix[i]);
+	return buffer;
+}
+
+/* returns the difference between
+	two timespecs in seconds */
+double timeDiff(const timespec_t *start, const timespec_t *end)
+{
+	return (end->tv_sec + (end->tv_nsec / 1000000000.0))
+		- (start->tv_sec + (start->tv_nsec / 1000000000.0));
 }

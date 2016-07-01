@@ -17,7 +17,7 @@ void printPercentage(off_t, off_t, off_t*);
 /* copies the source file to the destination file in
 	BUFFER_SIZE sections at a time
 	- prints percentage complete */
-void fsys_copy(const char *src, const char *dest)
+int fsys_copy(const char *src, const char *dest, info_t *info)
 {
 	int srcFD, destFD;
 	char buffer[BUFFER_SIZE];
@@ -58,7 +58,8 @@ void fsys_copy(const char *src, const char *dest)
 
 	close(srcFD);
 	close(destFD);
-	return;
+	info->copied++;
+	return 0;
 
 RW_ERR:
 	close(destFD);
@@ -66,7 +67,9 @@ RW_ERR:
 W_OPEN_ERR:
 	close(srcFD);
 R_OPEN_ERR:
+	info->failed++;
 	perror("");
+	return -1;
 }
 
 /* prints the percentage of the file copied, overwriting the

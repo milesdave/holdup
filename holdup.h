@@ -6,6 +6,7 @@
 info_t info;
 
 void process(FTSENT*);
+void copy(const char*, const char*);
 int byType(const FTSENT**, const FTSENT**);
 void indent(int);
 
