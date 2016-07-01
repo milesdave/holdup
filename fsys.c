@@ -5,6 +5,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include "fsys.h"
+#include "types.h"
 #include "util.h"
 
 #define BUFFER_SIZE 512

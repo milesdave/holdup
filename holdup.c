@@ -1,5 +1,6 @@
 #define _DEFAULT_SOURCE
 #include <fts.h>
+#include <linux/limits.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -29,6 +30,8 @@ int main(int argc, char *argv[])
 		case FTS_D: // directory
 			indent(node->fts_level);
 			printf("%s/\n", node->fts_name);
+			strcpy(info.srcPrefix, node->fts_path);
+			info.pathLevel = node->fts_level;
 			break;
 		case FTS_F: // file
 		case FTS_SL: // symlink
@@ -54,6 +57,8 @@ void process(FTSENT *node)
 	char fileSize[STRLEN_FILESIZE];
 	printf("%s: %s\n", node->fts_name,
 		fileSizeString(node->fts_statp->st_size, fileSize, STRLEN_FILESIZE));
+
+	char *newPath = reverseNChar(info.srcPrefix, '/', info.pathLevel + 1);
 }
 
 /* when processing an FTSENT, prioritise
@@ -72,6 +77,6 @@ int byType(const FTSENT **a, const FTSENT **b)
 	according to the file/dir depth */
 void indent(int i)
 {
-	for(; i > 0; i-- )
+	for(; i > 0; i--)
 		printf("  ");
 }

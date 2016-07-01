@@ -1,5 +1,7 @@
 #define _DEFAULT_SOURCE
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include "util.h"
 
 const char *byteSuffix[] = {"B", "K", "M", "G"};
@@ -22,4 +24,23 @@ char* fileSizeString(double bytes, char *buffer, const unsigned int bufferSize)
 		: snprintf(buffer, bufferSize, "%.1f%s", bytes, byteSuffix[i]);
 
 	return buffer;
+}
+
+/* finds the 'n'th occurance of 'x' char
+	from the end of a string */
+char* reverseNChar(char *string, char x, int n)
+{
+	int count = 0;
+
+	for(int i = strlen(string); i > 0; i++)
+	{
+		if(string[i] == x)
+		{
+			count++;
+			if(count == n)
+				return string + i;
+		}
+	}
+
+	return NULL;
 }

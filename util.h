@@ -7,9 +7,7 @@
 
 extern const char *byteSuffix[];
 
-typedef struct stat stat_t;
-typedef struct timespec timespec_t;
-
 char* fileSizeString(double, char*, const unsigned int);
+char* reverseNChar(char*, char, int);
 
 #endif
