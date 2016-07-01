@@ -57,7 +57,7 @@ int main(int argc, char *argv[])
 	return 0;
 }
 
-/* TODO determines what should be done with a file
+/* determines what should be done with a file
 	- doesn't exist: mkpath() and copy()
 	- does exist: check last modified and copy() */
 void process(FTSENT *node)
@@ -86,11 +86,24 @@ void process(FTSENT *node)
 	}
 	else // destFile does exist
 	{
-		//
+		// get destintation file's mtime
+		time_t destTime;
+		if((fsys_mtime(destFile, &destTime)) == -1)
+		{
+			perror("");
+			return;
+		}
+
+		// source has been mdofied since backup
+		if(node->fts_statp->st_mtime > destTime)
+			copy(node->fts_path, destFile);
+		else
+			printf("up-to-date\n");
 	}
 }
 
-/* TODO */
+/* copies the file to the destination and
+	records how long it took */
 void copy(const char *src, const char *dest)
 {
 	// start time

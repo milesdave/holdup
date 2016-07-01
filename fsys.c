@@ -134,3 +134,16 @@ int fsys_mkpath(const char *path)
 
 	return 0;
 }
+
+/* fills 'time' with the file's
+	last modified time */
+int fsys_mtime(const char *path, time_t *time)
+{
+	stat_t st;
+
+	if((stat(path, &st)) == -1)
+		return -1;
+
+	*time = st.st_mtime;
+	return 0;
+}
