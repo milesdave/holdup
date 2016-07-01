@@ -58,7 +58,7 @@ int main(int argc, char *argv[])
 
 /* TODO determines what should be done with a file
 	- doesn't exist: mkpath() and copy()
-	- does exists: check last modified and copy() */
+	- does exist: check last modified and copy() */
 void process(FTSENT *node)
 {
 	// basic output
@@ -70,6 +70,23 @@ void process(FTSENT *node)
 	char destPath[PATH_MAX]; // without filename - used for mkpath()
 	char destFile[PATH_MAX]; // with filename - used for copy()
 	getPaths(destPath, destFile, node->fts_name, &info);
+
+	// destFile doesn't exist
+	if((fsys_exists(destFile)) == -1)
+	{
+		// make path to destFile
+		if((fsys_mkpath(destPath)) == -1)
+		{
+			perror("");
+			return;
+		}
+
+		// TODO copy
+	}
+	else // destFile does exist
+	{
+		//
+	}
 }
 
 /* when processing an FTSENT, prioritise

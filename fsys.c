@@ -1,7 +1,9 @@
 #define _DEFAULT_SOURCE
 #include <fcntl.h>
+#include <linux/limits.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <sys/stat.h>
 #include <unistd.h>
 #include "fsys.h"
@@ -87,4 +89,45 @@ void printPercentage(off_t written, off_t fileSize, off_t *last)
 
 	fflush(stdout);
 	*last = percent;
+}
+
+/* returns the result of stat()
+	-1 if the path doesn't exist
+	0 if the path does exist */
+int fsys_exists(const char *path)
+{
+	stat_t st;
+	return stat(path, &st);
+}
+
+/* creates all non-existent directories
+	in a full path */
+int fsys_mkpath(const char *path)
+{
+	/* need a copy of the path because it will
+		be modifed in the process */
+	char pathCopy[PATH_MAX];
+	strcpy(pathCopy, path);
+
+	char newPath[PATH_MAX] = "";
+	char *dir = strtok(pathCopy, "/");
+
+	// absolute path from root
+	if(pathCopy[0] == '/')
+		strcat(newPath, "/");
+
+	while(dir != NULL)
+	{
+		strcat(newPath, dir);
+
+		if((fsys_exists(newPath)) == -1) // path doesn't exist
+			if((mkdir(newPath, 0777)) == -1) // create it
+				return -1; // mkdir() failed
+
+		// add next dir to path
+		strcat(newPath, "/");
+		dir = strtok(NULL, "/");
+	}
+
+	return 0;
 }
