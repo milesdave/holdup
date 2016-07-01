@@ -86,3 +86,24 @@ double timeDiff(const timespec_t *start, const timespec_t *end)
 	return (end->tv_sec + (end->tv_nsec / 1000000000.0))
 		- (start->tv_sec + (start->tv_nsec / 1000000000.0));
 }
+
+/* add bytes (B) to other bytes in another
+	format, eg: K, M or G */
+double addBytes(double total, double add, int *index)
+{
+	// convert new bytes to appropriate format
+	if(*index > 0)
+		for(int i = 0; i < *index; i++)
+			add /= 1024;
+
+	total += add;
+
+	// convert new total to appropriate format
+	while(total > 1024 && *index < 3)
+	{
+		total /= 1024;
+		(*index)++;
+	}
+
+	return total;
+}

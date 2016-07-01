@@ -54,6 +54,11 @@ int main(int argc, char *argv[])
 	}
 
 	fts_close(fts);
+
+	// total bytes
+	info.byteFormatIndex == 0 ? printf("%.0f%s", info.byteTotal, byteSuffix[info.byteFormatIndex])
+		: printf("%.1f%s", info.byteTotal, byteSuffix[info.byteFormatIndex]);
+
 	return 0;
 }
 

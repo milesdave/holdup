@@ -59,6 +59,7 @@ int fsys_copy(const char *src, const char *dest, info_t *info)
 	close(srcFD);
 	close(destFD);
 	info->copied++;
+	info->byteTotal = addBytes(info->byteTotal, written, &info->byteFormatIndex);
 	return 0;
 
 RW_ERR:

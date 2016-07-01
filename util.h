@@ -15,6 +15,7 @@ char* fileSizeString(double, char*, const unsigned int);
 char* reverseNChar(char*, char, int);
 char* timeString(double, char*, const unsigned int);
 double timeDiff(const timespec_t*, const timespec_t*);
+double addBytes(double, double, int*);
 void getPaths(char*, char*, char*, info_t*);
 
 #endif
