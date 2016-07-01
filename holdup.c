@@ -31,6 +31,10 @@ int main(int argc, char *argv[])
 	FTS *fts = fts_open(argv + 2, FTS_COMFOLLOW | FTS_NOCHDIR, &byType);
 	FTSENT *node;
 
+	// start time
+	timespec_t start, end;
+	clock_gettime(CLOCK_REALTIME, &start);
+
 	while((node = fts_read(fts)) != NULL)
 	{
 		switch(node->fts_info)
@@ -55,9 +59,21 @@ int main(int argc, char *argv[])
 
 	fts_close(fts);
 
+	// total files
+	info.copied == 1 ? printf("\n1 file copied, ")
+		: printf("\n%d files copied, ", info.copied);
+
 	// total bytes
-	info.byteFormatIndex == 0 ? printf("%.0f%s", info.byteTotal, byteSuffix[info.byteFormatIndex])
-		: printf("%.1f%s", info.byteTotal, byteSuffix[info.byteFormatIndex]);
+	info.byteFormatIndex == 0 ? printf("%.0f%s, ", info.byteTotal, byteSuffix[info.byteFormatIndex])
+		: printf("%.1f%s, ", info.byteTotal, byteSuffix[info.byteFormatIndex]);
+
+	// total time
+	clock_gettime(CLOCK_REALTIME, &end);
+	char timeStr[STRLEN_TIME];
+	printf("%s", timeString(timeDiff(&start, &end), timeStr, STRLEN_TIME));
+
+	// fails
+	info.failed > 0 ? printf(" (%s%d failed%s)\n", RED, info.failed, NRM) : printf("\n");
 
 	return 0;
 }
@@ -83,7 +99,7 @@ void process(FTSENT *node)
 		// make path to destFile
 		if((fsys_mkpath(destPath)) == -1)
 		{
-			perror("");
+			perror(" ");
 			return;
 		}
 
@@ -95,7 +111,7 @@ void process(FTSENT *node)
 		time_t destTime;
 		if((fsys_mtime(destFile, &destTime)) == -1)
 		{
-			perror("");
+			perror(" ");
 			return;
 		}
 

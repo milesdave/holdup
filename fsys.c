@@ -69,7 +69,7 @@ W_OPEN_ERR:
 	close(srcFD);
 R_OPEN_ERR:
 	info->failed++;
-	perror("");
+	perror(" ");
 	return -1;
 }
 

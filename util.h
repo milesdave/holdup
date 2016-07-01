@@ -3,6 +3,7 @@
 
 #include "types.h"
 
+#define RED "\x1b[1;31m"
 #define GRN "\x1b[1;32m"
 #define NRM "\x1b[0m"
 #define STRLEN_FILESIZE 8
