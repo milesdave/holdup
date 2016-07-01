@@ -20,6 +20,13 @@ int main(int argc, char *argv[])
 		if(argv[i][strlen(argv[i]) - 1] == '/')
 			argv[i][strlen(argv[i]) - 1] = '\0';
 
+	// set info inital values
+	strcpy(info.destPrefix, argv[1]);
+	info.copied = 0;
+	info.failed = 0;
+	info.byteFormatIndex = 0;
+	info.byteTotal = 0.0;
+
 	FTS *fts = fts_open(argv + 2, FTS_COMFOLLOW | FTS_NOCHDIR, &byType);
 	FTSENT *node;
 
@@ -49,7 +56,9 @@ int main(int argc, char *argv[])
 	return 0;
 }
 
-/* TODO */
+/* TODO determines what should be done with a file
+	- doesn't exist: mkpath() and copy()
+	- does exists: check last modified and copy() */
 void process(FTSENT *node)
 {
 	// basic output
@@ -58,7 +67,9 @@ void process(FTSENT *node)
 	printf("%s: %s\n", node->fts_name,
 		fileSizeString(node->fts_statp->st_size, fileSize, STRLEN_FILESIZE));
 
-	char *newPath = reverseNChar(info.srcPrefix, '/', info.pathLevel + 1);
+	char destPath[PATH_MAX]; // without filename - used for mkpath()
+	char destFile[PATH_MAX]; // with filename - used for copy()
+	getPaths(destPath, destFile, node->fts_name, &info);
 }
 
 /* when processing an FTSENT, prioritise
