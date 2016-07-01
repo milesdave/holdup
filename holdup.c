@@ -60,8 +60,8 @@ int main(int argc, char *argv[])
 	fts_close(fts);
 
 	// total files
-	info.copied == 1 ? printf("\n1 file copied, ")
-		: printf("\n%d files copied, ", info.copied);
+	info.copied == 1 ? printf("\n1 file, ")
+		: printf("\n%d files, ", info.copied);
 
 	// total bytes
 	info.byteFormatIndex == 0 ? printf("%.0f%s, ", info.byteTotal, byteSuffix[info.byteFormatIndex])
@@ -72,7 +72,7 @@ int main(int argc, char *argv[])
 	char timeStr[STRLEN_TIME];
 	printf("%s", timeString(timeDiff(&start, &end), timeStr, STRLEN_TIME));
 
-	// fails
+	// total fails
 	info.failed > 0 ? printf(" (%s%d failed%s)\n", RED, info.failed, NRM) : printf("\n");
 
 	return 0;

@@ -1,6 +1,7 @@
 #define _DEFAULT_SOURCE
 #include <fcntl.h>
 #include <linux/limits.h>
+#include <malloc.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -10,7 +11,7 @@
 #include "types.h"
 #include "util.h"
 
-#define BUFFER_SIZE 512
+#define BUFFER_SIZE sysconf(_SC_PAGESIZE)
 
 void printPercentage(off_t, off_t, off_t*);
 
@@ -20,7 +21,6 @@ void printPercentage(off_t, off_t, off_t*);
 int fsys_copy(const char *src, const char *dest, info_t *info)
 {
 	int srcFD, destFD;
-	char buffer[BUFFER_SIZE];
 	off_t bufferSize, fileSize, written, remaining, last;
 
 	// open source
@@ -40,6 +40,9 @@ int fsys_copy(const char *src, const char *dest, info_t *info)
 	remaining = fileSize = fileInfo.st_size;
 	last = -1; // -1 means nothing written yet - used in printPercentage()
 
+	// buffer aligned to page size
+	char *buffer = memalign(sysconf(_SC_PAGESIZE), BUFFER_SIZE);
+
 	// copy source BUFFER_SIZE at a time to destination
 	while(written != fileSize)
 	{
@@ -56,6 +59,7 @@ int fsys_copy(const char *src, const char *dest, info_t *info)
 		printPercentage(written, fileSize, &last);
 	}
 
+	free(buffer);
 	close(srcFD);
 	close(destFD);
 	info->copied++;
@@ -63,6 +67,7 @@ int fsys_copy(const char *src, const char *dest, info_t *info)
 	return 0;
 
 RW_ERR:
+	free(buffer);
 	close(destFD);
 	remove(dest);
 W_OPEN_ERR:
