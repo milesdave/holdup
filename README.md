@@ -14,7 +14,7 @@ A source file is copied if:
 
 ## Compiling
 
-`make` will compile the utility and `sudo make install` will copy it to `usr/local/bin` (which should be in your `PATH`).
+`make` will compile the utility and `sudo make install` will copy it to `/usr/local/bin` (which should be in your `$PATH`).
 
 Alternatively: `make && sudo make install && make clean`.
 
