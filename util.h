@@ -21,7 +21,7 @@ extern const char *timeSuffix[];
 char* fileSizeString(double bytes, char *buffer, const unsigned int bufferSize);
 char* reverseNChar(char *string, char x, int n);
 char* timeString(double time, char *buffer, const unsigned int bufferSize);
-char* stringTrunc(char *string);
+char* stringTrunc(char *string, char *buffer);
 
 double timeDiff(const timespec_t *start, const timespec_t *end);
 double addBytes(double total, double add, int *index);

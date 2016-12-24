@@ -81,7 +81,7 @@ char* timeString(double time, char *buffer, const unsigned int bufferSize)
 
 /* truncates a string if it's over a certain
 	length and adds an ellipsis */
-char* stringTrunc(char *string)
+char* stringTrunc(char *string, char *buffer)
 {
 	int len = strlen(string);
 
@@ -89,13 +89,9 @@ char* stringTrunc(char *string)
 	if(len <= STRLEN_TRUNC)
 		return string;
 
-	// keep a copy of the original
-	char tmp[PATH_MAX];
-	strcpy(tmp, string);
+	snprintf(buffer, len, "%.*s...%.*s", TRUNC_LEN, string, TRUNC_LEN, &string[len - TRUNC_LEN]);
 
-	snprintf(string, len, "%.*s...%.*s", TRUNC_LEN, tmp, TRUNC_LEN, &tmp[len - TRUNC_LEN]);
-
-	return string;
+	return buffer;
 }
 
 /* returns the difference between

@@ -87,9 +87,11 @@ int main(int argc, char *argv[])
 	- does exist: check last modified and copy() */
 void process(FTSENT *node)
 {
-	indent(node->fts_level);
 	char fileSize[STRLEN_FILESIZE];
-	printf("%s %s%s%s ", stringTrunc(node->fts_name), BLU,
+	char fileName[PATH_MAX];
+
+	indent(node->fts_level);
+	printf("%s %s%s%s ", stringTrunc(node->fts_name, fileName), BLU,
 		fileSizeString(node->fts_statp->st_size, fileSize, STRLEN_FILESIZE), NRM);
 
 	char destPath[PATH_MAX]; // without filename - used for mkpath()
