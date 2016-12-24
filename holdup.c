@@ -1,6 +1,7 @@
 #define _DEFAULT_SOURCE
+#include <sys/types.h>
 #include <fts.h>
-#include <linux/limits.h>
+#include <limits.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -145,7 +146,7 @@ void copy(const char *src, const char *dest)
 
 /* when processing an FTSENT, prioritise
 	files over directories */
-int byType(const FTSENT **a, const FTSENT **b)
+int byType(const FTSENT *const *a, const FTSENT *const *b)
 {
 	if(((*a)->fts_info == FTS_F) && ((*b)->fts_info != FTS_F))
 		return -1;

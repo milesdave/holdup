@@ -1,7 +1,7 @@
 #ifndef _TYPES_H
 #define _TYPES_H
 
-#include <linux/limits.h>
+#include <limits.h>
 
 typedef struct stat stat_t;
 typedef struct timespec timespec_t;

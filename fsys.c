@@ -1,6 +1,6 @@
 #define _DEFAULT_SOURCE
 #include <fcntl.h>
-#include <linux/limits.h>
+#include <limits.h>
 #include <malloc.h>
 #include <stdio.h>
 #include <stdlib.h>
