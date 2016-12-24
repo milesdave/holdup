@@ -21,6 +21,9 @@ int main(int argc, char *argv[])
 		if(argv[i][strlen(argv[i]) - 1] == '/')
 			argv[i][strlen(argv[i]) - 1] = '\0';
 
+	// disable buffering on stdout
+	setbuf(stdout, NULL);
+
 	// set info inital values
 	strcpy(info.destPrefix, argv[1]);
 	info.copied = 0;
@@ -51,7 +54,7 @@ int main(int argc, char *argv[])
 			break;
 		case FTS_DNR: // inaccessable dir
 		case FTS_ERR: // general error
-			perror("");
+			ERROR;
 		default:
 			break;
 		}
@@ -73,7 +76,7 @@ int main(int argc, char *argv[])
 	printf("%s", timeString(timeDiff(&start, &end), timeStr, STRLEN_TIME));
 
 	// total fails
-	info.failed > 0 ? printf(" (%s%d failed%s)\n", RED, info.failed, NRM) : printf("\n");
+	info.failed > 0 ? printf(", %s%d failed%s\n", RED, info.failed, NRM) : printf("\n");
 
 	return 0;
 }
@@ -83,11 +86,10 @@ int main(int argc, char *argv[])
 	- does exist: check last modified and copy() */
 void process(FTSENT *node)
 {
-	// basic output
 	indent(node->fts_level);
 	char fileSize[STRLEN_FILESIZE];
-	printf("%s: %s ", node->fts_name,
-		fileSizeString(node->fts_statp->st_size, fileSize, STRLEN_FILESIZE));
+	printf("%s %s%s%s ", stringTrunc(node->fts_name), BLU,
+		fileSizeString(node->fts_statp->st_size, fileSize, STRLEN_FILESIZE), NRM);
 
 	char destPath[PATH_MAX]; // without filename - used for mkpath()
 	char destFile[PATH_MAX]; // with filename - used for copy()
@@ -99,7 +101,7 @@ void process(FTSENT *node)
 		// make path to destFile
 		if((fsys_mkpath(destPath)) == -1)
 		{
-			perror(" ");
+			ERROR;
 			return;
 		}
 
@@ -111,7 +113,7 @@ void process(FTSENT *node)
 		time_t destTime;
 		if((fsys_mtime(destFile, &destTime)) == -1)
 		{
-			perror(" ");
+			ERROR;
 			return;
 		}
 
@@ -119,7 +121,7 @@ void process(FTSENT *node)
 		if(node->fts_statp->st_mtime > destTime)
 			copy(node->fts_path, destFile);
 		else
-			printf("up-to-date\n");
+			printf("\n");
 	}
 }
 
@@ -136,7 +138,8 @@ void copy(const char *src, const char *dest)
 		// time output
 		clock_gettime(CLOCK_REALTIME, &end);
 		char timeStr[STRLEN_TIME];
-		printf(" %s\n", timeString(timeDiff(&start, &end), timeStr, STRLEN_TIME));
+		printf("\b\b\b\b%s%s%s\n", GRN,
+			timeString(timeDiff(&start, &end), timeStr, STRLEN_TIME), NRM);
 	}
 }
 

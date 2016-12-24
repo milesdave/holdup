@@ -79,6 +79,25 @@ char* timeString(double time, char *buffer, const unsigned int bufferSize)
 	return buffer;
 }
 
+/* truncates a string if it's over a certain
+	length and adds an ellipsis */
+char* stringTrunc(char *string)
+{
+	int len = strlen(string);
+
+	// no need to truncate
+	if(len <= STRLEN_TRUNC)
+		return string;
+
+	// keep a copy of the original
+	char tmp[PATH_MAX];
+	strcpy(tmp, string);
+
+	snprintf(string, len, "%.*s...%.*s", TRUNC_LEN, tmp, TRUNC_LEN, &tmp[len - TRUNC_LEN]);
+
+	return string;
+}
+
 /* returns the difference between
 	two timespecs in seconds */
 double timeDiff(const timespec_t *start, const timespec_t *end)

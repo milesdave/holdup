@@ -74,7 +74,7 @@ W_OPEN_ERR:
 	close(srcFD);
 R_OPEN_ERR:
 	info->failed++;
-	perror(" ");
+	ERROR;
 	return -1;
 }
 
@@ -96,7 +96,6 @@ void printPercentage(off_t written, off_t fileSize, off_t *last)
 		percent == 100 ? printf("\b\b\b%s100%%%s", GRN, NRM)
 			: printf("\b\b\b%ld%%", percent);
 
-	fflush(stdout);
 	*last = percent;
 }
 
