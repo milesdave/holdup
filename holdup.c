@@ -86,12 +86,10 @@ int main(int argc, char *argv[])
 	- does exist: check last modified and copy() */
 void process(FTSENT *node)
 {
-	char fileSize[STRLEN_FILESIZE];
 	char fileName[PATH_MAX];
 
 	indent(node->fts_level);
-	printf("%s %s%s%s ", stringTrunc(node->fts_name, fileName), BLU,
-		fileSizeString(node->fts_statp->st_size, fileSize, STRLEN_FILESIZE), NRM);
+	printf("%s ", stringTrunc(node->fts_name, fileName));
 
 	char destPath[PATH_MAX]; // without filename - used for mkpath()
 	char destFile[PATH_MAX]; // with filename - used for copy()
@@ -107,6 +105,7 @@ void process(FTSENT *node)
 			return;
 		}
 
+		printSize(node->fts_statp->st_size);
 		copy(node->fts_path, destFile);
 	}
 	else // destFile does exist
@@ -121,10 +120,23 @@ void process(FTSENT *node)
 
 		// source has been mdofied since backup
 		if(node->fts_statp->st_mtime > destTime)
+		{
+			printSize(node->fts_statp->st_size);
 			copy(node->fts_path, destFile);
-		else
-			printf("\n");
+			return;
+		}
+
+		printf("\n");
 	}
+}
+
+/* prints the size of a file in a human-readable
+	format and coloured blue */
+void printSize(const size_t size)
+{
+	char fileSize[STRLEN_FILESIZE];
+	printf("%s%s%s ", BLU,
+		fileSizeString(size, fileSize, STRLEN_FILESIZE), NRM);
 }
 
 /* copies the file to the destination and
